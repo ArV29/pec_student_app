@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "303516345423",
+    "project_id": "pec-student",
+    "storage_bucket": "pec-student.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303516345423:android:9353d5ec55bb531807f63a",
+        "android_client_info": {
+          "package_name": "me.arv.pec_student"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303516345423-ti1j3rndecat5r9vaboqs7qp0leitcmi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZErjtlqL3Ub0rlUcp043-MVPX9BXHglM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303516345423-ti1j3rndecat5r9vaboqs7qp0leitcmi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

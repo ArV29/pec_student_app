@@ -1,0 +1,29 @@
+name: pec_student
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  firebase_core: ^1.1.0
+  email_validator: ^2.0.1
+  cloud_firestore: ^1.0.7
+  firebase_auth: ^1.1.2
+  modal_progress_hud: ^0.1.3
+  fluttertoast: ^8.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
