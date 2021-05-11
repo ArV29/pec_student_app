@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:pec_student/constants.dart';
+import 'package:pec_student/screens/edit_time_table.dart';
 import 'package:pec_student/services/networking.dart';
 
 class TimeTable extends StatefulWidget {
@@ -17,8 +18,8 @@ class _TimeTableState extends State<TimeTable> {
   int year;
   int difference = 0;
   int weekday = DateTime.now().weekday - 1;
-
   Map timeTable;
+  List<Widget> editTimeTable = [];
   Widget timeTableList = Text('Loading');
   List<String> weekdays = [
     'Monday',
@@ -35,6 +36,16 @@ class _TimeTableState extends State<TimeTable> {
     setState(() {
       timeTableList = buildTimeTable();
     });
+    if (await Networking().isAdmin()) {
+      setState(() {
+        editTimeTable.add(TextButton(
+          child: Text('Edit'),
+          onPressed: () {
+            Navigator.pushNamed(context, EditTimeTable.id);
+          },
+        ));
+      });
+    }
   }
 
   Widget buildTimeTable() {
@@ -92,6 +103,7 @@ class _TimeTableState extends State<TimeTable> {
         title: Text(
           'Time Table',
         ),
+        actions: editTimeTable,
       ),
       body: Column(
         children: [

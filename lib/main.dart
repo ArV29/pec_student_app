@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pec_student/screens/edit_subjects.dart';
 import 'package:pec_student/screens/edit_time_table.dart';
 import 'package:pec_student/screens/email_screen.dart';
 import 'package:pec_student/screens/homepage.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         Homepage.id: (context) => Homepage(),
         TimeTable.id: (context) => TimeTable(),
         EditTimeTable.id: (context) => EditTimeTable(),
+        EditSubjects.id: (context) => EditSubjects(),
       },
     );
   }

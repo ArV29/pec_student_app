@@ -2,14 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Networking {
   Future<bool> userExists({@required String email}) async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    try // Password should be really long to avoid actually logging in :)
+    {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email, password: 'ashdfjquiwhibvkbwquibfuqwvqubv');
+    } catch (error) {
+      print(error.code);
+      if (error.code == 'wrong-password') {
+        return true;
+      }
 
-    var user = await users.doc(email).get();
-
-    return user.exists;
+      if (error.code == 'user-not-found') {
+        return false;
+      }
+    }
+    return false;
   }
 
   Future<void> addUser(
@@ -20,7 +31,7 @@ class Networking {
     await Firebase.initializeApp();
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     await users.doc(email).set(
-      {'name': name, 'year': year, 'branch': branch},
+      {'name': name, 'year': year, 'branch': branch, 'isAdmin': false},
     );
     print('User added in database');
   }
@@ -61,9 +72,10 @@ class Networking {
         return ('Incorrect Password');
       }
     } catch (e) {
+      print(e);
       return e;
     }
-    return 'try again';
+    return 'Something went wrong. Please try again later';
   }
 
   Future<void> signOut() async {
@@ -84,13 +96,28 @@ class Networking {
     Map info = await getUserInfo();
     print('Info : $info');
 
-    print('Weekday');
     CollectionReference timetables =
         FirebaseFirestore.instance.collection('timetable');
     String key = (info['branch'] + info['year'].toString());
 
     var timetable = await timetables.doc(key).get();
-    print('TimeTable: $timetable ');
     return timetable.data();
+  }
+
+  Future getSubjects() async {
+    Map info = await getUserInfo();
+    String key = (info['branch'] + info['year'].toString());
+
+    var subjects =
+        await FirebaseFirestore.instance.collection('subjects').doc(key).get();
+
+    return subjects.data();
+  }
+
+  Future addSubject({@required subject}) async {}
+
+  Future<bool> isAdmin() async {
+    Map info = await getUserInfo();
+    return (info['isAdmin']);
   }
 }

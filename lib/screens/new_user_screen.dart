@@ -23,7 +23,8 @@ class _NewUserScreenState extends State<NewUserScreen> {
     'Civil',
     'Mech',
     'Prod',
-    'Aero'
+    'Aero',
+    'Meta'
   ];
   String nameErrorText = '', pwdErrorText = '';
   bool showSpinner = false;
