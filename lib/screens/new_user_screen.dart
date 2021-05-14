@@ -225,7 +225,10 @@ class _NewUserScreenState extends State<NewUserScreen> {
 
                     await Networking().signUp(email: email, password: pwd);
                     await Networking().addUser(
-                        name: name, email: email, year: year, branch: branch);
+                        name: name,
+                        email: email,
+                        year: year,
+                        branch: branch.toLowerCase());
                     setState(() {
                       showSpinner = false;
                     });

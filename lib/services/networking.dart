@@ -84,17 +84,14 @@ class Networking {
 
   Future<Map> getUserInfo() async {
     String user = FirebaseAuth.instance.currentUser.email;
-    print('User: $user');
     DocumentSnapshot receivedData =
         await FirebaseFirestore.instance.collection('users').doc(user).get();
-    print('Received Data: $receivedData');
     Map<String, dynamic> convertedData = receivedData.data();
     return convertedData;
   }
 
   Future<Map> getTimeTable() async {
     Map info = await getUserInfo();
-    print('Info : $info');
 
     CollectionReference timetables =
         FirebaseFirestore.instance.collection('timetable');
@@ -119,5 +116,23 @@ class Networking {
   Future<bool> isAdmin() async {
     Map info = await getUserInfo();
     return (info['isAdmin']);
+  }
+
+  void updateTimeTable({@required weekday, @required Map timeTable}) async {
+    Map info = await getUserInfo();
+
+    CollectionReference timetables =
+        FirebaseFirestore.instance.collection('timetable');
+    String key = (info['branch'] + info['year'].toString());
+    var tt = await timetables.doc(key).get();
+    Map<String, dynamic> timetable = {};
+
+    if (tt.exists) {
+      timetable = tt.data();
+    } else {}
+    timetable[weekday] = timeTable;
+    print(key);
+    await timetables.doc(key).set(timetable);
+    print('Time Table Update Successful');
   }
 }

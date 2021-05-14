@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pec_student/constants.dart';
+import 'package:pec_student/screens/edit_time_table.dart';
 import 'package:pec_student/screens/time_table.dart';
 import 'package:pec_student/services/networking.dart';
 
@@ -84,6 +85,15 @@ class _HomepageState extends State<Homepage> {
                 Navigator.pushNamed(context, TimeTable.id);
               },
               child: Text('Time Table'),
+              enableFeedback: true,
+              color: kRedAccentColor,
+              textColor: kLightTextColor,
+            ),
+            MaterialButton(
+              onPressed: () async {
+                Navigator.pushNamed(context, EditTimeTable.id);
+              },
+              child: Text('Edit Time Table'),
               enableFeedback: true,
               color: kRedAccentColor,
               textColor: kLightTextColor,
