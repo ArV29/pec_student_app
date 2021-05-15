@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:pec_student/constants.dart';
+import 'package:pec_student/screens/email_screen.dart';
 import 'package:pec_student/screens/personal_info.dart';
 import 'package:pec_student/screens/time_table.dart';
 import 'package:pec_student/services/networking.dart';
@@ -88,9 +90,36 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
           Container(
-            width: 80.0,
-            color: kBackgroundColor,
-          ),
+              width: 80.0,
+              color: kBackgroundColor,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await Networking().signOut();
+                      Navigator.pushNamed(context, EmailScreen.id);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: kLightAccentColor,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: Center(
+                          child: Text(
+                        'Sign Out',
+                        style: TextStyle(
+                          color: kBackgroundColor,
+                          fontSize: 10.0,
+                        ),
+                      )),
+                    ),
+                  ),
+                ],
+              )),
         ],
       ),
     ));
