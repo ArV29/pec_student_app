@@ -49,10 +49,13 @@ class _HomepageState extends State<Homepage> {
                       margin: EdgeInsets.only(left: 10.0, right: 20.0),
                       child: FittedBox(
                         fit: BoxFit.fitWidth,
-                        child: Text(
-                          'Home Page',
-                          style: TextStyle(
-                            color: kBackgroundColor,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            'Home Page',
+                            style: TextStyle(
+                              color: kBackgroundColor,
+                            ),
                           ),
                         ),
                       ),
@@ -104,11 +107,14 @@ class _HomepageState extends State<Homepage> {
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: kLightAccentColor,
-              fontSize: 30.0,
+          child: Material(
+            type: MaterialType.transparency,
+            child: Text(
+              text,
+              style: TextStyle(
+                color: kLightAccentColor,
+                fontSize: 30.0,
+              ),
             ),
           ),
         ),

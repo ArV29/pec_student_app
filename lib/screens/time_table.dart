@@ -247,12 +247,16 @@ class _TimeTableState extends State<TimeTable> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Center(
-          child: Text(
-            day,
-            style: TextStyle(
-              color:
-                  (selectedDay == index) ? kBackgroundColor : kLightAccentColor,
-              fontSize: 35.0,
+          child: Material(
+            type: MaterialType.transparency,
+            child: Text(
+              day,
+              style: TextStyle(
+                color: (selectedDay == index)
+                    ? kBackgroundColor
+                    : kLightAccentColor,
+                fontSize: 35.0,
+              ),
             ),
           ),
         ),
