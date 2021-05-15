@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pec_student/constants.dart';
-import 'package:pec_student/screens/edit_time_table.dart';
+import 'package:pec_student/screens/personal_info.dart';
 import 'package:pec_student/screens/time_table.dart';
 import 'package:pec_student/services/networking.dart';
-
-import 'initialize.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key key}) : super(key: key);
@@ -35,72 +32,90 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ModalProgressHUD(
-        inAsyncCall: showSpinner,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: Text(
-                'HomePage',
-                style: TextStyle(
-                  fontSize: 45.0,
-                  color: kHintLightTextColor,
+        body: SafeArea(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Hero(
+              tag: 'side_bar',
+              child: Container(
+                color: kLightAccentColor,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 100.0,
+                      margin: EdgeInsets.only(left: 10.0, right: 20.0),
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text(
+                          'Home Page',
+                          style: TextStyle(
+                            color: kBackgroundColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 10.0, right: 20.0),
+                      child: Divider(
+                        thickness: 3.0,
+                        color: kBackgroundColor,
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildNavigatorButtons(
+                              context: context,
+                              id: PersonalInfo.id,
+                              text: 'Personal Info'),
+                          buildNavigatorButtons(
+                              context: context,
+                              id: TimeTable.id,
+                              text: 'Time Table'),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            SizedBox(
-              height: 64.0,
+          ),
+          Container(
+            width: 80.0,
+            color: kBackgroundColor,
+          ),
+        ],
+      ),
+    ));
+  }
+
+  GestureDetector buildNavigatorButtons(
+      {@required BuildContext context, @required id, @required text}) {
+    return GestureDetector(
+      child: Container(
+        height: 80.0,
+        margin: EdgeInsets.all(10.0),
+        decoration: BoxDecoration(
+          color: kBackgroundColor,
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: kLightAccentColor,
+              fontSize: 30.0,
             ),
-            Text(
-              'Welcome\n' + name,
-              style: TextStyle(
-                fontSize: 30.0,
-                color: kLightTextColor,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            SizedBox(
-              height: 250.0,
-            ),
-            MaterialButton(
-              onPressed: () async {
-                setState(() {
-                  showSpinner = true;
-                });
-                await Networking().signOut();
-                setState(() {
-                  showSpinner = false;
-                });
-                Navigator.pushNamed(context, InitializeScreen.id);
-              },
-              child: Text('Sign Out'),
-              enableFeedback: true,
-              color: kRedAccentColor,
-              textColor: kLightTextColor,
-            ),
-            MaterialButton(
-              onPressed: () async {
-                Navigator.pushNamed(context, TimeTable.id);
-              },
-              child: Text('Time Table'),
-              enableFeedback: true,
-              color: kRedAccentColor,
-              textColor: kLightTextColor,
-            ),
-            MaterialButton(
-              onPressed: () async {
-                Navigator.pushNamed(context, EditTimeTable.id);
-              },
-              child: Text('Edit Time Table'),
-              enableFeedback: true,
-              color: kRedAccentColor,
-              textColor: kLightTextColor,
-            ),
-          ],
+          ),
         ),
       ),
+      onTap: () {
+        Navigator.pushNamed(context, id);
+      },
     );
   }
 }

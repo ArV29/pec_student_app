@@ -6,6 +6,7 @@ import 'package:pec_student/screens/homepage.dart';
 import 'package:pec_student/screens/initialize.dart';
 import 'package:pec_student/screens/new_user_screen.dart';
 import 'package:pec_student/screens/password_screen.dart';
+import 'package:pec_student/screens/personal_info.dart';
 import 'package:pec_student/screens/time_table.dart';
 
 import 'constants.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         TimeTable.id: (context) => TimeTable(),
         EditTimeTable.id: (context) => EditTimeTable(),
         EditSubjects.id: (context) => EditSubjects(),
+        PersonalInfo.id: (context) => PersonalInfo(),
       },
     );
   }

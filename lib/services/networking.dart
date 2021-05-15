@@ -9,7 +9,7 @@ class Networking {
     try // Password should be really long to avoid actually logging in :)
     {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: 'ashdfjquiwhibvkbwquibfuqwvqubv');
+          email: email, password: 'ashdfjquiwhibvkbwquibfuqjkljghggjggwvqubv');
     } catch (error) {
       print(error.code);
       if (error.code == 'wrong-password') {

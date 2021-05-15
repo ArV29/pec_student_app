@@ -48,7 +48,11 @@ class _InitializeScreenState extends State<InitializeScreen> {
         ),
         MaterialButton(
           onPressed: () {
-            Navigator.pushNamed(context, EmailScreen.id);
+            if (FirebaseAuth.instance.currentUser != null) {
+              Navigator.pushNamed(context, Homepage.id);
+            } else {
+              Navigator.pushNamed(context, EmailScreen.id);
+            }
           },
           child: Icon(Icons.arrow_forward_rounded),
         ),

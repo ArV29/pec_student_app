@@ -84,7 +84,12 @@ class _TimeTableState extends State<TimeTable> {
 
   @override
   void initState() {
+    selectedDay = DateTime.now().weekday;
+    if (selectedDay == 7) {
+      selectedDay = 0;
+    }
     super.initState();
+
     getTimeTable();
   }
 
@@ -95,23 +100,23 @@ class _TimeTableState extends State<TimeTable> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              color: kLightAccentColor,
-              width: 80.0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 100.0,
-                  ),
-                  buildGestureDetector(index: 0, day: 'S'),
-                  buildGestureDetector(index: 1, day: 'M'),
-                  buildGestureDetector(index: 2, day: 'T'),
-                  buildGestureDetector(index: 3, day: 'W'),
-                  buildGestureDetector(index: 4, day: 'T'),
-                  buildGestureDetector(index: 5, day: 'F'),
-                  buildGestureDetector(index: 6, day: 'S'),
-                ],
+            Hero(
+              tag: 'side_bar',
+              child: Container(
+                color: kLightAccentColor,
+                width: 80.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildGestureDetector(index: 0, day: 'S'),
+                    buildGestureDetector(index: 1, day: 'M'),
+                    buildGestureDetector(index: 2, day: 'T'),
+                    buildGestureDetector(index: 3, day: 'W'),
+                    buildGestureDetector(index: 4, day: 'T'),
+                    buildGestureDetector(index: 5, day: 'F'),
+                    buildGestureDetector(index: 6, day: 'S'),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -207,7 +212,9 @@ class _TimeTableState extends State<TimeTable> {
                         child: Text(
                           subject,
                           style: TextStyle(
-                              color: kYellowAccentColor, fontSize: 25.0),
+                              color: kYellowAccentColor,
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.w900),
                         ),
                       ),
                     ),
@@ -232,8 +239,8 @@ class _TimeTableState extends State<TimeTable> {
       {@required int index, @required String day}) {
     return GestureDetector(
       child: Container(
-        height: 70.0,
-        width: 70.0,
+        height: 60.0,
+        width: 60.0,
         margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
         decoration: BoxDecoration(
           color: (selectedDay == index) ? kYellowAccentColor : kBackgroundColor,
