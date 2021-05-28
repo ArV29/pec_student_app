@@ -1,81 +1,83 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:pec_student/constants.dart';
-import 'package:pec_student/screens/edit_time_table.dart';
-import 'package:pec_student/services/networking.dart';
-import 'package:pec_student/widgets.dart';
+import 'package:pec_student/screens/edit_announcements.dart';
+import 'package:pec_student/services/miscellaneous.dart';
 
-class TimeTable extends StatefulWidget {
-  static String id = 'timetable';
-  const TimeTable({Key key}) : super(key: key);
+import '../constants.dart';
+import '../services/networking.dart';
+import '../widgets.dart';
+
+class Announcements extends StatefulWidget {
+  static String id = 'announcements';
+
+  const Announcements({Key key}) : super(key: key);
 
   @override
-  _TimeTableState createState() => _TimeTableState();
+  _AnnouncementsState createState() => _AnnouncementsState();
 }
 
-class _TimeTableState extends State<TimeTable> {
-  Map timeTable = {};
-  int selectedDay = 0;
+class _AnnouncementsState extends State<Announcements> {
   bool isAdmin = false;
-  List<Widget> classCards = [Text('Loading...')];
+  Map announcements;
+  DateTime selectedDate;
+  List<Widget> announcementCards = [Text('Loading...')];
 
-  void buildClassCards() {
-    List<Widget> cards = [];
-    String day = weekdays[selectedDay];
-    Map timeTableForTheDay = timeTable[day.toLowerCase()];
-    if (timeTableForTheDay.length == 0) {
+  void buildAnnouncementCards() {
+    String date =
+        MiscellaneousFunctions().networkingDateFormat(date: selectedDate);
+
+    Map announcementsForTheDay = announcements[date];
+    if (announcementsForTheDay == null || announcementsForTheDay.length == 0) {
+      Widget card = Container(
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: kYellowAccentColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(
+          child: Text(
+            'No announcements for the day',
+            style: kHeadingTextStyle2.copyWith(
+                fontSize: 25, color: kDarkHighlightColor),
+          ),
+        ),
+      );
       setState(() {
-        classCards = [
+        announcementCards = [
           SizedBox(
             height: 128.0,
           ),
-          Container(
-            padding: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: kYellowAccentColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'No classes for today!',
-              style: kHeadingTextStyle2.copyWith(
-                  fontSize: 25, color: kDarkHighlightColor),
-            ),
-          ),
+          card
         ];
       });
       return;
     }
-    List<String> classTimings = timeTableForTheDay.keys.toList();
-    classTimings.sort((a, b) => a.compareTo(b));
-    for (String time in classTimings) {
-      cards.add(Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: TimeTableCard(
-            classDetails: timeTableForTheDay[time], classTime: time),
-      ));
+    List<Widget> cards = [];
+    for (String announcement in announcementsForTheDay.keys) {
+      cards.add(SizedBox(height: 32.0));
+      cards.add(InfoCard(
+          heading: announcement,
+          content: announcementsForTheDay[announcement]));
+      cards.add(SizedBox(height: 32.0));
     }
+
     setState(() {
-      classCards = cards;
+      announcementCards = cards;
     });
   }
 
   void getData() async {
-    timeTable = await Networking().getTimeTable();
-    buildClassCards();
     Map userData = await Networking().getUserInfo();
-
+    announcements = await Networking().getAnnouncements();
     setState(() {
       isAdmin = userData['isAdmin'];
     });
+    buildAnnouncementCards();
   }
 
   @override
   void initState() {
-    selectedDay = DateTime.now().weekday - 1;
-    if (selectedDay == 7) {
-      selectedDay = 0;
-    }
+    selectedDate = DateTime.now();
     super.initState();
 
     getData();
@@ -88,9 +90,9 @@ class _TimeTableState extends State<TimeTable> {
         backgroundColor: kLightColor,
         leading: Container(),
         title: Text(
-          'Schedule',
+          'Announcements',
           style:
-              kHeadingTextStyle1.copyWith(color: kSecondaryColor, fontSize: 44),
+              kHeadingTextStyle1.copyWith(color: kSecondaryColor, fontSize: 36),
         ),
         actions: [
           (isAdmin)
@@ -99,8 +101,7 @@ class _TimeTableState extends State<TimeTable> {
                   child: RoundIconButton(
                     icon: Icons.edit,
                     onPress: () {
-                      Navigator.pushNamed(context, EditTimeTable.id,
-                          arguments: timeTable);
+                      Navigator.pushNamed(context, EditAnnouncements.id);
                     },
                     foregroundColor: kPrimaryColor,
                     backgroundColor: kLightHighlightColor,
@@ -123,17 +124,16 @@ class _TimeTableState extends State<TimeTable> {
                       icon: Icons.arrow_back_ios_rounded,
                       onPress: () {
                         setState(() {
-                          selectedDay--;
-                          if (selectedDay == -1) {
-                            selectedDay = 6;
-                          }
-                          buildClassCards();
+                          selectedDate =
+                              selectedDate.subtract(Duration(days: 1));
+                          buildAnnouncementCards();
                         });
                       }),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32.0),
                     child: Text(
-                      weekdays[selectedDay],
+                      MiscellaneousFunctions()
+                          .formattedDate(date: selectedDate),
                       style: kHeadingTextStyle1.copyWith(
                           color: kLightHighlightColor, fontSize: 24.0),
                     ),
@@ -142,11 +142,8 @@ class _TimeTableState extends State<TimeTable> {
                       icon: Icons.arrow_forward_ios_rounded,
                       onPress: () {
                         setState(() {
-                          selectedDay++;
-                          if (selectedDay == 7) {
-                            selectedDay = 0;
-                          }
-                          buildClassCards();
+                          selectedDate = selectedDate.add(Duration(days: 1));
+                          buildAnnouncementCards();
                         });
                       }),
                 ],
@@ -161,13 +158,13 @@ class _TimeTableState extends State<TimeTable> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListView(
-                  children: classCards,
+                  children: announcementCards,
                   scrollDirection: Axis.vertical,
                 ),
               ),
             ),
             BottomBar(
-              index: 1,
+              index: 3,
             ),
           ],
         ),

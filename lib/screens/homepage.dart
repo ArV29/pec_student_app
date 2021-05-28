@@ -1,32 +1,143 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:fluttermoji/fluttermoji.dart';
 import 'package:pec_student/constants.dart';
 import 'package:pec_student/screens/email_screen.dart';
-import 'package:pec_student/screens/personal_info.dart';
-import 'package:pec_student/screens/time_table.dart';
 import 'package:pec_student/services/networking.dart';
 
+import '../widgets.dart';
+import 'initialize.dart';
+import 'settings.dart';
+
 class Homepage extends StatefulWidget {
-  const Homepage({Key key}) : super(key: key);
   static String id = 'homepage';
   @override
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
+  Map userInfo;
   String name = '';
-  bool showSpinner = false;
-
+  Map timetable;
+  Map assignments;
+  Widget nextClass = Text('Loading...');
+  Widget nextAssignment = Text('Loading...');
+  String dayDate = weekdays[DateTime.now().weekday - 1] +
+      ', ' +
+      DateTime.now().day.toString() +
+      ' ' +
+      months[DateTime.now().month];
   void getData() async {
-    Map userInfo = await Networking().getUserInfo();
+    userInfo = await Networking().getUserInfo();
+    timetable = await Networking().getTimeTable();
+    assignments = await Networking().getAssignments();
+    print(assignments);
     setState(() {
-      name = userInfo['name'];
+      name = userInfo['name'].split(' ')[0];
+      print(name);
+      String nextClassTime = getNextClass();
+      if (nextClassTime == '') {
+        nextClass = Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: kSecondaryColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: kYellowAccentColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(
+              child: Text(
+                'No more classes for today!',
+                style: kHeadingTextStyle2.copyWith(
+                    fontSize: 25, color: kDarkHighlightColor),
+              ),
+            ),
+          ),
+        );
+      } else {
+        String day = weekdays[DateTime.now().weekday];
+        nextClass = TimeTableCard(
+          classDetails: timetable[day][nextClassTime],
+          classTime: nextClassTime,
+        );
+      }
+
+      int nextAssignmentTime = getNextAssignment();
+      if (nextAssignmentTime == 0) {
+        nextAssignment = Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: kSecondaryColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: kYellowAccentColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(
+              child: Text(
+                'No upcoming assignments!',
+                style: kHeadingTextStyle2.copyWith(
+                    fontSize: 25, color: kDarkHighlightColor),
+              ),
+            ),
+          ),
+        );
+      } else {
+        nextAssignment = AssignmentCard(
+          assignmentDetails: assignments[nextAssignmentTime],
+          assignmentTime: nextAssignmentTime,
+        );
+      }
     });
+  }
+
+  String getNextClass() {
+    DateTime currentDateTime = DateTime.now();
+    String day = weekdays[currentDateTime.weekday];
+    String hours = currentDateTime.hour.toString();
+    if (hours.length == 1) {
+      hours = '0' + hours;
+    }
+    String minutes = currentDateTime.minute.toString();
+    if (minutes.length == 1) {
+      minutes = '0' + minutes;
+    }
+    String currentTime = hours + minutes;
+    String nextClass = '';
+    for (String time in timetable[day.toLowerCase()].keys) {
+      if (time.compareTo(currentTime) >= 0) {
+        if (nextClass == '' || time.compareTo(nextClass) <= 0) {
+          nextClass = time;
+        }
+      }
+    }
+    return nextClass;
+  }
+
+  int getNextAssignment() {
+    int currentDateTime = DateTime.now().millisecondsSinceEpoch;
+    List assignmentDates = assignments.keys.toList();
+    if (assignmentDates.length == 0) {
+      return 0;
+    }
+    assignmentDates.sort();
+    for (int time in assignmentDates) {
+      if (time >= currentDateTime) {
+        return time;
+      }
+    }
+    return 0;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
@@ -34,123 +145,117 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 30.0),
+          child: IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () {
+                Networking().signOut();
+                Navigator.pushNamedAndRemoveUntil(context, EmailScreen.id,
+                    ModalRoute.withName(InitializeScreen.id));
+              }),
+        ),
+        elevation: 0.0,
+        backgroundColor: kPrimaryColor,
+      ),
+      backgroundColor: kPrimaryColor,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Hero(
-              tag: 'side_bar',
-              child: Container(
-                color: kLightAccentColor,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: 100.0,
-                      margin: EdgeInsets.only(left: 10.0, right: 20.0),
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: Text(
-                            'Home Page',
-                            style: TextStyle(
-                              color: kBackgroundColor,
-                            ),
-                          ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hello,',
+                          style: kNormalTextStyle.copyWith(
+                              color: kLightColor, fontSize: 35.0),
                         ),
-                      ),
+                        Text(
+                          name,
+                          style: kHeadingTextStyle2.copyWith(
+                              color: kLightHighlightColor, fontSize: 40),
+                        )
+                      ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 10.0, right: 20.0),
-                      child: Divider(
-                        thickness: 3.0,
-                        color: kBackgroundColor,
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          buildNavigatorButtons(
-                              context: context,
-                              id: PersonalInfo.id,
-                              text: 'Personal Info'),
-                          buildNavigatorButtons(
-                              context: context,
-                              id: TimeTable.id,
-                              text: 'Time Table'),
-                        ],
-                      ),
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        FluttermojiCircleAvatar(
+                          backgroundColor: kLightColor,
+                          radius: 75.0,
+                        ),
+                        RoundIconButton(
+                          icon: Icons.edit,
+                          onPress: () {
+                            Navigator.pushNamed(context, Settings.id);
+                          },
+                          backgroundColor: kLightColor,
+                          foregroundColor: kPrimaryColor,
+                        )
+                      ],
                     )
                   ],
                 ),
               ),
-            ),
-          ),
-          Container(
-              width: 80.0,
-              color: kBackgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      await Networking().signOut();
-                      Navigator.pushNamed(context, EmailScreen.id);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 10.0),
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: kLightAccentColor,
-                        borderRadius: BorderRadius.circular(5.0),
+              SizedBox(
+                height: 32.0,
+              ),
+              Container(
+                width: double.infinity,
+                height: 1.0,
+                color: kSecondaryColor,
+              ),
+              SizedBox(
+                height: 32.0,
+              ),
+              Text(
+                dayDate,
+                style: kHeadingTextStyle1.copyWith(
+                    color: kLightHighlightColor, fontSize: 35),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                      child: Text(
+                        'Next Class:',
+                        style: kHeadingTextStyle2.copyWith(
+                            color: kLightColor, fontSize: 17),
                       ),
-                      child: Center(
-                          child: Text(
-                        'Sign Out',
-                        style: TextStyle(
-                          color: kBackgroundColor,
-                          fontSize: 10.0,
-                        ),
-                      )),
                     ),
-                  ),
-                ],
-              )),
+                    nextClass,
+                    SizedBox(
+                      height: 32.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                      child: Text(
+                        'Upcoming Assignment:',
+                        style: kHeadingTextStyle2.copyWith(
+                            color: kLightColor, fontSize: 17),
+                      ),
+                    ),
+                    nextAssignment,
+                  ],
+                ),
+              )
+            ],
+          ),
+          BottomBar(index: 0),
         ],
       ),
-    ));
-  }
-
-  GestureDetector buildNavigatorButtons(
-      {@required BuildContext context, @required id, @required text}) {
-    return GestureDetector(
-      child: Container(
-        height: 80.0,
-        margin: EdgeInsets.all(10.0),
-        decoration: BoxDecoration(
-          color: kBackgroundColor,
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Center(
-          child: Material(
-            type: MaterialType.transparency,
-            child: Text(
-              text,
-              style: TextStyle(
-                color: kLightAccentColor,
-                fontSize: 30.0,
-              ),
-            ),
-          ),
-        ),
-      ),
-      onTap: () {
-        Navigator.pushNamed(context, id);
-      },
     );
   }
 }

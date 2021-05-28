@@ -1,10 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pec_student/constants.dart';
 import 'package:pec_student/screens/new_user_screen.dart';
 import 'package:pec_student/screens/password_screen.dart';
 import 'package:pec_student/services/networking.dart';
+import 'package:pec_student/widgets.dart';
 
 class EmailScreen extends StatefulWidget {
   static String id = 'emailScreen';
@@ -46,18 +48,33 @@ class _EmailScreenState extends State<EmailScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: TextField(
-                    onChanged: (value) {
-                      email = value;
-                    },
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your official PEC email ID',
-                      errorText: errorText,
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: kElevatedBackgroundColor,
-                        ),
+                  child: Container(
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      color: kSecondaryColor,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Center(
+                      child: TextFormField(
+                        onChanged: (value) {
+                          email = value;
+                        },
+                        style: kNormalTextStyle.copyWith(
+                            color: kLightHighlightColor, fontSize: 15),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            focusedErrorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            hintText: 'Enter your official PEC email-id!',
+                            hintStyle:
+                                kNormalTextStyle.copyWith(color: kLightColor),
+                            prefixIcon: Icon(
+                              Icons.person,
+                              color: kLightHighlightColor,
+                            )),
                       ),
                     ),
                   ),
@@ -65,19 +82,18 @@ class _EmailScreenState extends State<EmailScreen> {
                 SizedBox(
                   height: 32.0,
                 ),
-                MaterialButton(
-                  onPressed: () async {
+                RoundIconButton(
+                  icon: Icons.arrow_forward_ios,
+                  onPress: () async {
                     setState(() {
                       showSpinner = true;
                     });
-                    if (EmailValidator.validate(email)) {
+                    if (email != '' &&
+                        EmailValidator.validate(email) &&
+                        email.split('@')[1] == 'pec.edu.in') {
                       print('Valid Email');
 
-                      setState(() {
-                        errorText = '';
-                      });
-                      if (await Networking().userExists(email: email) ||
-                          email == '') {
+                      if (await Networking().userExists(email: email)) {
                         setState(() {
                           showSpinner = false;
                         });
@@ -97,16 +113,27 @@ class _EmailScreenState extends State<EmailScreen> {
                         );
                       }
                     } else {
-                      setState(() {
-                        errorText = 'Please enter a valid email address';
-                      });
+                      Fluttertoast.showToast(
+                          msg: "Invalid Email Address!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: kLightColor,
+                          textColor: kPrimaryColor,
+                          fontSize: 16.0);
                       setState(() {
                         showSpinner = false;
                       });
                     }
                   },
-                  child: Icon(Icons.arrow_forward_rounded),
+                  backgroundColor: kYellowAccentColor,
+                  foregroundColor: kRedAccentColor,
+                  radius: 50.0,
                 ),
+                // MaterialButton(
+
+                //   child: Icon(Icons.arrow_forward_rounded),
+                // ),
                 SizedBox(
                   height: 64.0,
                 ),

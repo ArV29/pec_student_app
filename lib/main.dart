@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:pec_student/screens/edit_subjects.dart';
+import 'package:pec_student/screens/announcements.dart';
+import 'package:pec_student/screens/assignments.dart';
+import 'package:pec_student/screens/edit_announcements.dart';
+import 'package:pec_student/screens/edit_assignments.dart';
 import 'package:pec_student/screens/edit_time_table.dart';
 import 'package:pec_student/screens/email_screen.dart';
 import 'package:pec_student/screens/homepage.dart';
 import 'package:pec_student/screens/initialize.dart';
 import 'package:pec_student/screens/new_user_screen.dart';
 import 'package:pec_student/screens/password_screen.dart';
-import 'package:pec_student/screens/personal_info.dart';
+import 'package:pec_student/screens/settings.dart';
 import 'package:pec_student/screens/time_table.dart';
 
 import 'constants.dart';
@@ -22,11 +25,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark().copyWith(
-        backgroundColor: kBackgroundColor,
-        scaffoldBackgroundColor: kBackgroundColor,
-        accentColor: kElevatedBackgroundColor,
+        backgroundColor: kPrimaryColor,
+        scaffoldBackgroundColor: kPrimaryColor,
+        accentColor: kSecondaryColor,
         textTheme: TextTheme(
-          bodyText1: TextStyle(color: kLightTextColor),
+          bodyText1: TextStyle(color: kLightColor),
         ),
       ),
       initialRoute: InitializeScreen.id,
@@ -38,8 +41,11 @@ class MyApp extends StatelessWidget {
         Homepage.id: (context) => Homepage(),
         TimeTable.id: (context) => TimeTable(),
         EditTimeTable.id: (context) => EditTimeTable(),
-        EditSubjects.id: (context) => EditSubjects(),
-        PersonalInfo.id: (context) => PersonalInfo(),
+        Assignments.id: (context) => Assignments(),
+        EditAssignments.id: (context) => EditAssignments(),
+        Announcements.id: (context) => Announcements(),
+        EditAnnouncements.id: (context) => EditAnnouncements(),
+        Settings.id: (context) => Settings(),
       },
     );
   }

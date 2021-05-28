@@ -36,6 +36,20 @@ class Networking {
     print('User added in database');
   }
 
+  Future<void> updateUser(
+      {@required name,
+      @required email,
+      @required year,
+      @required branch,
+      @required isAdmin}) async {
+    await Firebase.initializeApp();
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    await users.doc(email).set(
+      {'name': name, 'year': year, 'branch': branch, 'isAdmin': isAdmin},
+    );
+    print('User added in database');
+  }
+
   Future<void> signUp({@required email, @required password}) async {
     FirebaseAuth.instance.authStateChanges().listen((User user) {
       if (user == null) {
@@ -90,49 +104,130 @@ class Networking {
     return convertedData;
   }
 
-  Future<Map> getTimeTable() async {
-    Map info = await getUserInfo();
+  Future<Map> getTimeTable({Map info}) async {
+    info = await getUserInfo();
+    String key =
+        (info['branch'].toString().toLowerCase() + info['year'].toString());
+    CollectionReference data = FirebaseFirestore.instance.collection(key);
 
-    CollectionReference timetables =
-        FirebaseFirestore.instance.collection('timetable');
-    String key = (info['branch'] + info['year'].toString());
-
-    var timetable = await timetables.doc(key).get();
-    return timetable.data();
+    var timetable = await data.doc('timetable').get();
+    print(timetable.exists);
+    if (timetable.exists) {
+      print(timetable.data());
+      if (timetable.data() == null || timetable.data().length == 0) {
+        return {
+          'monday': {},
+          'tuesday': {},
+          'wednesday': {},
+          'thursday': {},
+          'friday': {},
+          'saturday': {},
+          'sunday': {},
+        };
+      }
+      return timetable.data();
+    } else {
+      return {
+        'monday': {},
+        'tuesday': {},
+        'wednesday': {},
+        'thursday': {},
+        'friday': {},
+        'saturday': {},
+        'sunday': {},
+      };
+    }
   }
 
-  Future getSubjects() async {
+  void updateTimeTable({timetable}) async {
     Map info = await getUserInfo();
-    String key = (info['branch'] + info['year'].toString());
+    String key =
+        (info['branch'].toString().toLowerCase() + info['year'].toString());
+    CollectionReference data = FirebaseFirestore.instance.collection(key);
 
-    var subjects =
-        await FirebaseFirestore.instance.collection('subjects').doc(key).get();
-
-    return subjects.data();
+    await data.doc('timetable').set(timetable);
   }
 
-  Future addSubject({@required subject}) async {}
-
-  Future<bool> isAdmin() async {
+  Future<Map> getAssignments() async {
     Map info = await getUserInfo();
-    return (info['isAdmin']);
+    String key =
+        (info['branch'].toString().toLowerCase() + info['year'].toString());
+    CollectionReference data = FirebaseFirestore.instance.collection(key);
+
+    var assignments = await data.doc('assignments').get();
+    if (assignments.exists) {
+      Map convertedAssignments = {};
+      for (String time in assignments.data().keys) {
+        convertedAssignments[int.parse(time)] = assignments.data()[time];
+      }
+      return convertedAssignments;
+    } else {
+      return {};
+    }
+    // Map assignments = {
+    //   1622226300000: {
+    //     'name': 'Physics Practical',
+    //     'groups': 'All',
+    //   }
+    // };
+    // return assignments;
   }
 
-  void updateTimeTable({@required weekday, @required Map timeTable}) async {
+  Future<void> updateAssignments({@required Map assignments}) async {
     Map info = await getUserInfo();
+    String key =
+        (info['branch'].toString().toLowerCase() + info['year'].toString());
+    CollectionReference data = FirebaseFirestore.instance.collection(key);
 
-    CollectionReference timetables =
-        FirebaseFirestore.instance.collection('timetable');
-    String key = (info['branch'] + info['year'].toString());
-    var tt = await timetables.doc(key).get();
-    Map<String, dynamic> timetable = {};
+    Map<String, Map> convertedAssignments = {};
+    for (int time in assignments.keys) {
+      convertedAssignments[time.toString()] = assignments[time];
+    }
 
-    if (tt.exists) {
-      timetable = tt.data();
-    } else {}
-    timetable[weekday] = timeTable;
-    print(key);
-    await timetables.doc(key).set(timetable);
-    print('Time Table Update Successful');
+    await data.doc('assignments').set(convertedAssignments);
+  }
+
+  Future<Map> getAnnouncements() async {
+    Map info = await getUserInfo();
+    String key =
+        (info['branch'].toString().toLowerCase() + info['year'].toString());
+    CollectionReference data = FirebaseFirestore.instance.collection(key);
+
+    var announcements = await data.doc('announcements').get();
+    if (announcements.exists) {
+      return announcements.data();
+    } else {
+      return {};
+    }
+  }
+
+  void updateAnnouncements({@required Map announcements}) async {
+    Map info = await getUserInfo();
+    String key =
+        (info['branch'].toString().toLowerCase() + info['year'].toString());
+    CollectionReference data = FirebaseFirestore.instance.collection(key);
+
+    await data.doc('announcements').set(announcements);
+  }
+
+  Future<Map> getNotes() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    var data = await users.doc(FirebaseAuth.instance.currentUser.email).get();
+    Map convertedData = data.data();
+    if (convertedData['notes'] != null) {
+      return convertedData['notes'];
+    } else {
+      return {};
+    }
+  }
+
+  void updateNotes({@required Map notes}) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    var data = await users.doc(FirebaseAuth.instance.currentUser.email).get();
+    Map convertedData = data.data();
+    convertedData['notes'] = notes;
+    await users.doc(FirebaseAuth.instance.currentUser.email).set(convertedData);
   }
 }

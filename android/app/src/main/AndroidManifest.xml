@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.arv.pec_student">
    <application
-        android:label="pec_student"
+        android:label="PEC Student"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

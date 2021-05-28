@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pec_student/constants.dart';
 import 'package:pec_student/services/networking.dart';
+import 'package:pec_student/widgets.dart';
 
 import 'homepage.dart';
+import 'initialize.dart';
 
 class PasswordScreen extends StatefulWidget {
   const PasswordScreen({Key key}) : super(key: key);
@@ -13,7 +16,8 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
-  String email, errorText = '', password = '';
+  String email, password = '';
+  bool hiddenPassword = true;
   bool showSpinner = false;
   @override
   Widget build(BuildContext context) {
@@ -42,18 +46,45 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: TextField(
-                    onChanged: (value) {
-                      password = value;
-                    },
-                    obscureText: true,
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      errorText: errorText,
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: kElevatedBackgroundColor,
+                  child: Container(
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      color: kSecondaryColor,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Center(
+                      child: TextFormField(
+                        obscureText: hiddenPassword,
+                        onChanged: (value) {
+                          password = value;
+                        },
+                        style: kNormalTextStyle.copyWith(
+                            color: kLightHighlightColor, fontSize: 15),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          hintText: 'Enter your password',
+                          hintStyle:
+                              kNormalTextStyle.copyWith(color: kLightColor),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: kLightHighlightColor,
+                          ),
+                          suffix: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                hiddenPassword = !hiddenPassword;
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: Icon(Icons.remove_red_eye),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -62,8 +93,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 SizedBox(
                   height: 32.0,
                 ),
-                MaterialButton(
-                  onPressed: () async {
+                RoundIconButton(
+                  icon: Icons.arrow_forward_ios,
+                  onPress: () async {
                     setState(() {
                       showSpinner = true;
                     });
@@ -71,18 +103,32 @@ class _PasswordScreenState extends State<PasswordScreen> {
                         .logIn(email: email, password: password);
                     if (result != 'ok') {
                       setState(() {
-                        errorText = result;
+                        Fluttertoast.showToast(
+                            msg: "Incorrect password",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: kLightColor,
+                            textColor: kPrimaryColor,
+                            fontSize: 16.0);
                         showSpinner = false;
                       });
                     } else {
                       setState(() {
                         showSpinner = false;
                       });
-                      Navigator.pushNamed(context, Homepage.id);
+                      Navigator.pushNamedAndRemoveUntil(context, Homepage.id,
+                          ModalRoute.withName(InitializeScreen.id));
                     }
                   },
-                  child: Icon(Icons.arrow_forward_rounded),
+                  backgroundColor: kYellowAccentColor,
+                  foregroundColor: kRedAccentColor,
+                  radius: 50.0,
                 ),
+                // MaterialButton(
+
+                //   child: Icon(Icons.arrow_forward_rounded),
+                // ),
                 SizedBox(
                   height: 64.0,
                 ),
