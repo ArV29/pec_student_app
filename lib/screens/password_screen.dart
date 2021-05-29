@@ -91,6 +91,29 @@ class _PasswordScreenState extends State<PasswordScreen> {
                   ),
                 ),
                 SizedBox(
+                  height: 4.0,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      child: Text('Forgot password?'),
+                      onPressed: () async {
+                        Networking().sendPasswordResetEmail(email: email);
+                        Fluttertoast.showToast(
+                            msg: "Password reset link sent to\n $email",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: kLightColor,
+                            textColor: kPrimaryColor,
+                            fontSize: 16.0);
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(
                   height: 32.0,
                 ),
                 RoundIconButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pec_student/screens/assignments.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../constants.dart';
@@ -573,7 +574,8 @@ class _EditAssignmentsState extends State<EditAssignments> {
                                   ),
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                        context, Assignments.id);
                                   })
                             ],
                           );
@@ -626,7 +628,8 @@ class _EditAssignmentsState extends State<EditAssignments> {
                                         assignments: assignments);
 
                                     Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                        context, Assignments.id);
                                   }),
                               DialogButton(
                                   color: kLightHighlightColor,
@@ -732,7 +735,8 @@ class _EditAssignmentsState extends State<EditAssignments> {
                           ),
                           onPressed: () {
                             Navigator.pop(context);
-                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(
+                                context, Assignments.id);
                             return true;
                           })
                     ],

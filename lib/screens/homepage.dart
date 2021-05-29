@@ -31,10 +31,10 @@ class _HomepageState extends State<Homepage> {
     userInfo = await Networking().getUserInfo();
     timetable = await Networking().getTimeTable();
     assignments = await Networking().getAssignments();
-    print(assignments);
+
     setState(() {
       name = userInfo['name'].split(' ')[0];
-      print(name);
+
       String nextClassTime = getNextClass();
       if (nextClassTime == '') {
         nextClass = Container(
@@ -59,7 +59,8 @@ class _HomepageState extends State<Homepage> {
           ),
         );
       } else {
-        String day = weekdays[DateTime.now().weekday];
+        String day = weekdays[DateTime.now().weekday - 1].toLowerCase();
+
         nextClass = TimeTableCard(
           classDetails: timetable[day][nextClassTime],
           classTime: nextClassTime,
@@ -100,7 +101,7 @@ class _HomepageState extends State<Homepage> {
 
   String getNextClass() {
     DateTime currentDateTime = DateTime.now();
-    String day = weekdays[currentDateTime.weekday];
+    String day = weekdays[currentDateTime.weekday - 1];
     String hours = currentDateTime.hour.toString();
     if (hours.length == 1) {
       hours = '0' + hours;

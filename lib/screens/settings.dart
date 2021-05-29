@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermoji.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pec_student/constants.dart';
 import 'package:pec_student/screens/homepage.dart';
 import 'package:pec_student/screens/initialize.dart';
@@ -17,17 +18,41 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  Widget mainBody = Text('Loading...');
+  Widget nameField = Text('Loading...');
   bool isAdmin;
   void getInfo() async {
     Map info = await Networking().getUserInfo();
     email = FirebaseAuth.instance.currentUser.email;
-    name = info['name'];
-    branch = info['branch'];
-    year = info['year'];
-    isAdmin = info['isAdmin'];
-    print('here');
-    setState(() {});
+
+    setState(() {
+      name = info['name'];
+      nameField = Center(
+        child: TextFormField(
+          initialValue: name,
+          onChanged: (value) {
+            name = value;
+          },
+          style: kNormalTextStyle.copyWith(
+              color: kLightHighlightColor, fontSize: 15),
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              hintText: 'Enter your name',
+              hintStyle: kNormalTextStyle.copyWith(color: kLightColor),
+              prefixIcon: Icon(
+                Icons.person,
+                color: kLightHighlightColor,
+              )),
+        ),
+      );
+      branch = info['branch'];
+      year = info['year'];
+      isAdmin = info['isAdmin'];
+    });
   }
 
   String name, branch, email;
@@ -125,35 +150,12 @@ class _SettingsState extends State<Settings> {
               height: 32.0,
             ),
             Container(
-              height: 64.0,
-              decoration: BoxDecoration(
-                color: kSecondaryColor,
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Center(
-                child: TextFormField(
-                  initialValue: name,
-                  onChanged: (value) {
-                    name = value;
-                  },
-                  style: kNormalTextStyle.copyWith(
-                      color: kLightHighlightColor, fontSize: 15),
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      hintText: 'Enter your name',
-                      hintStyle: kNormalTextStyle.copyWith(color: kLightColor),
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: kLightHighlightColor,
-                      )),
+                height: 64.0,
+                decoration: BoxDecoration(
+                  color: kSecondaryColor,
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
-              ),
-            ),
+                child: nameField),
             SizedBox(
               height: 16.0,
             ),
@@ -211,6 +213,29 @@ class _SettingsState extends State<Settings> {
               ],
             ),
             SizedBox(
+              height: 16.0,
+            ),
+            Container(
+              width: double.infinity,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  child: Text('Reset password!'),
+                  onPressed: () async {
+                    Networking().sendPasswordResetEmail(email: email);
+                    Fluttertoast.showToast(
+                        msg: "Password reset link sent to\n $email",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: kLightColor,
+                        textColor: kPrimaryColor,
+                        fontSize: 16.0);
+                  },
+                ),
+              ),
+            ),
+            SizedBox(
               height: 32.0,
             ),
             RoundIconButton(
@@ -222,6 +247,14 @@ class _SettingsState extends State<Settings> {
                     year: year,
                     branch: branch,
                     isAdmin: isAdmin);
+                Fluttertoast.showToast(
+                    msg: "Details updated successfully",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: kLightColor,
+                    textColor: kPrimaryColor,
+                    fontSize: 16.0);
                 Navigator.pushNamedAndRemoveUntil(context, Homepage.id,
                     ModalRoute.withName(InitializeScreen.id));
               },

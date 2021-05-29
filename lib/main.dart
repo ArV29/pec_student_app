@@ -3,11 +3,13 @@ import 'package:pec_student/screens/announcements.dart';
 import 'package:pec_student/screens/assignments.dart';
 import 'package:pec_student/screens/edit_announcements.dart';
 import 'package:pec_student/screens/edit_assignments.dart';
+import 'package:pec_student/screens/edit_notes.dart';
 import 'package:pec_student/screens/edit_time_table.dart';
 import 'package:pec_student/screens/email_screen.dart';
 import 'package:pec_student/screens/homepage.dart';
 import 'package:pec_student/screens/initialize.dart';
 import 'package:pec_student/screens/new_user_screen.dart';
+import 'package:pec_student/screens/notes.dart';
 import 'package:pec_student/screens/password_screen.dart';
 import 'package:pec_student/screens/settings.dart';
 import 'package:pec_student/screens/time_table.dart';
@@ -46,6 +48,8 @@ class MyApp extends StatelessWidget {
         Announcements.id: (context) => Announcements(),
         EditAnnouncements.id: (context) => EditAnnouncements(),
         Settings.id: (context) => Settings(),
+        Notes.id: (context) => Notes(),
+        EditNotes.id: (context) => EditNotes(),
       },
     );
   }

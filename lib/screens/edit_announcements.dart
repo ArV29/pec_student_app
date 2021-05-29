@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pec_student/constants.dart';
+import 'package:pec_student/screens/announcements.dart';
 import 'package:pec_student/services/miscellaneous.dart';
 import 'package:pec_student/services/networking.dart';
 import 'package:pec_student/widgets.dart';
@@ -93,7 +94,6 @@ class _EditAnnouncementsState extends State<EditAnnouncements> {
                               fontSize: 16.0);
                           return;
                         }
-                        print(announcements);
                         if (announcements[MiscellaneousFunctions()
                                 .networkingDateFormat(date: selectedDate)] ==
                             null) {
@@ -293,8 +293,7 @@ class _EditAnnouncementsState extends State<EditAnnouncements> {
   void buildEditorCards() {
     String date =
         MiscellaneousFunctions().networkingDateFormat(date: selectedDate);
-    print(date);
-    print(announcements);
+
     Map announcementsForTheDay = announcements[date];
     if (announcementsForTheDay == null || announcementsForTheDay.length == 0) {
       Widget card = Container(
@@ -400,7 +399,8 @@ class _EditAnnouncementsState extends State<EditAnnouncements> {
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Navigator.pushReplacementNamed(
+                                      context, Announcements.id);
                                 })
                           ],
                         );
@@ -453,7 +453,8 @@ class _EditAnnouncementsState extends State<EditAnnouncements> {
                                       announcements: announcements);
 
                                   Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Navigator.pushReplacementNamed(
+                                      context, Announcements.id);
                                 }),
                             DialogButton(
                                 color: kLightHighlightColor,
@@ -593,7 +594,8 @@ class _EditAnnouncementsState extends State<EditAnnouncements> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(
+                              context, Announcements.id);
                           return true;
                         })
                   ],

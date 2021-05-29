@@ -23,6 +23,10 @@ class Networking {
     return false;
   }
 
+  Future<void> sendPasswordResetEmail({@required String email}) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
   Future<void> addUser(
       {@required name,
       @required email,
@@ -33,7 +37,6 @@ class Networking {
     await users.doc(email).set(
       {'name': name, 'year': year, 'branch': branch, 'isAdmin': false},
     );
-    print('User added in database');
   }
 
   Future<void> updateUser(
@@ -47,7 +50,6 @@ class Networking {
     await users.doc(email).set(
       {'name': name, 'year': year, 'branch': branch, 'isAdmin': isAdmin},
     );
-    print('User added in database');
   }
 
   Future<void> signUp({@required email, @required password}) async {
@@ -111,9 +113,7 @@ class Networking {
     CollectionReference data = FirebaseFirestore.instance.collection(key);
 
     var timetable = await data.doc('timetable').get();
-    print(timetable.exists);
     if (timetable.exists) {
-      print(timetable.data());
       if (timetable.data() == null || timetable.data().length == 0) {
         return {
           'monday': {},
@@ -140,12 +140,13 @@ class Networking {
   }
 
   void updateTimeTable({timetable}) async {
+    Map<String, dynamic> convertedTT = new Map<String, dynamic>.from(timetable);
     Map info = await getUserInfo();
     String key =
         (info['branch'].toString().toLowerCase() + info['year'].toString());
     CollectionReference data = FirebaseFirestore.instance.collection(key);
 
-    await data.doc('timetable').set(timetable);
+    await data.doc('timetable').set(convertedTT);
   }
 
   Future<Map> getAssignments() async {
@@ -202,12 +203,15 @@ class Networking {
   }
 
   void updateAnnouncements({@required Map announcements}) async {
+    Map<String, dynamic> convertedAnnouncements =
+        new Map<String, dynamic>.from(announcements);
+
     Map info = await getUserInfo();
     String key =
         (info['branch'].toString().toLowerCase() + info['year'].toString());
     CollectionReference data = FirebaseFirestore.instance.collection(key);
 
-    await data.doc('announcements').set(announcements);
+    await data.doc('announcements').set(convertedAnnouncements);
   }
 
   Future<Map> getNotes() async {
@@ -223,11 +227,13 @@ class Networking {
   }
 
   void updateNotes({@required Map notes}) async {
+    Map<String, dynamic> convertedNotes = new Map<String, dynamic>.from(notes);
+
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     var data = await users.doc(FirebaseAuth.instance.currentUser.email).get();
     Map convertedData = data.data();
-    convertedData['notes'] = notes;
+    convertedData['notes'] = convertedNotes;
     await users.doc(FirebaseAuth.instance.currentUser.email).set(convertedData);
   }
 }

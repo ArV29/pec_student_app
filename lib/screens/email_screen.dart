@@ -91,8 +91,6 @@ class _EmailScreenState extends State<EmailScreen> {
                     if (email != '' &&
                         EmailValidator.validate(email) &&
                         email.split('@')[1] == 'pec.edu.in') {
-                      print('Valid Email');
-
                       if (await Networking().userExists(email: email)) {
                         setState(() {
                           showSpinner = false;

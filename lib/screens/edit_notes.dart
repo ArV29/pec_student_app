@@ -6,6 +6,8 @@ import 'package:pec_student/services/networking.dart';
 import 'package:pec_student/widgets.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import 'notes.dart';
+
 class EditNotes extends StatefulWidget {
   static String id = 'edit_notes';
   const EditNotes({Key key}) : super(key: key);
@@ -36,7 +38,7 @@ class _EditNotesState extends State<EditNotes> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Class Heading: ',
+                    'Heading: ',
                     style: kHeadingTextStyle2.copyWith(color: kPrimaryColor),
                   ),
                   TextFormField(
@@ -93,7 +95,14 @@ class _EditNotesState extends State<EditNotes> {
                               fontSize: 16.0);
                           return;
                         }
-                        notes[selectedDate][title] = info;
+                        if (notes[MiscellaneousFunctions()
+                                .networkingDateFormat(date: selectedDate)] ==
+                            null) {
+                          notes[MiscellaneousFunctions()
+                              .networkingDateFormat(date: selectedDate)] = {};
+                        }
+                        notes[MiscellaneousFunctions().networkingDateFormat(
+                            date: selectedDate)][title] = info;
                         unsavedChanges = true;
                         Navigator.pop(context);
                         buildEditorCards();
@@ -180,8 +189,11 @@ class _EditNotesState extends State<EditNotes> {
                               fontSize: 16.0);
                           return;
                         }
-                        notes[selectedDate].remove(heading);
-                        notes[selectedDate][title] = info;
+                        notes[MiscellaneousFunctions()
+                                .networkingDateFormat(date: selectedDate)]
+                            .remove(heading);
+                        notes[MiscellaneousFunctions().networkingDateFormat(
+                            date: selectedDate)][title] = info;
                         unsavedChanges = true;
                         Navigator.pop(context);
                         buildEditorCards();
@@ -383,7 +395,8 @@ class _EditNotesState extends State<EditNotes> {
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Navigator.pushReplacementNamed(
+                                      context, Notes.id);
                                 })
                           ],
                         );
@@ -435,7 +448,8 @@ class _EditNotesState extends State<EditNotes> {
                                   Networking().updateNotes(notes: notes);
                                   Navigator.pop(context);
 
-                                  Navigator.pop(context);
+                                  Navigator.pushReplacementNamed(
+                                      context, Notes.id);
                                 }),
                             DialogButton(
                                 color: kLightHighlightColor,
@@ -575,7 +589,7 @@ class _EditNotesState extends State<EditNotes> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(context, Notes.id);
                           return true;
                         })
                   ],

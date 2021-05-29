@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pec_student/screens/edit_announcements.dart';
 import 'package:pec_student/services/miscellaneous.dart';
 
 import '../constants.dart';
 import '../services/networking.dart';
 import '../widgets.dart';
+import 'edit_notes.dart';
 
 class Notes extends StatefulWidget {
   static String id = 'notes';
@@ -93,7 +93,7 @@ class _NotesState extends State<Notes> {
             child: RoundIconButton(
               icon: Icons.edit,
               onPress: () {
-                Navigator.pushNamed(context, EditAnnouncements.id);
+                Navigator.pushNamed(context, EditNotes.id);
               },
               foregroundColor: kPrimaryColor,
               backgroundColor: kLightHighlightColor,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pec_student/constants.dart';
+import 'package:pec_student/screens/time_table.dart';
 import 'package:pec_student/services/miscellaneous.dart';
 import 'package:pec_student/services/networking.dart';
 import 'package:pec_student/widgets.dart';
@@ -422,7 +423,6 @@ class _EditTimeTableState extends State<EditTimeTable> {
     List<Widget> cards = [];
     String day = weekdays[selectedDay];
     Map timeTableForTheDay = timeTable[day.toLowerCase()];
-    print(timeTableForTheDay);
     if (timeTableForTheDay.length == 0) {
       setState(() {
         editorCards = [
@@ -520,7 +520,8 @@ class _EditTimeTableState extends State<EditTimeTable> {
                                   ),
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                        context, TimeTable.id);
                                   })
                             ],
                           );
@@ -573,7 +574,8 @@ class _EditTimeTableState extends State<EditTimeTable> {
                                         .updateTimeTable(timetable: timeTable);
                                     Navigator.pop(context);
 
-                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                        context, TimeTable.id);
                                   }),
                               DialogButton(
                                   color: kLightHighlightColor,
@@ -717,7 +719,8 @@ class _EditTimeTableState extends State<EditTimeTable> {
                           ),
                           onPressed: () {
                             Navigator.pop(context);
-                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(
+                                context, TimeTable.id);
                             return true;
                           })
                     ],
