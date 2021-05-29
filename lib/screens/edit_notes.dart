@@ -251,11 +251,7 @@ class _EditNotesState extends State<EditNotes> {
                               ),
                               color: kLightHighlightColor,
                               onPressed: () {
-                                notes[selectedDate].remove(heading);
-                                unsavedChanges = true;
-                                setState(() {
-                                  buildEditorCards();
-                                });
+                                Navigator.pop(context);
                               }),
                           DialogButton(
                               color: kLightHighlightColor,
@@ -269,7 +265,16 @@ class _EditNotesState extends State<EditNotes> {
                                 ),
                               ),
                               onPressed: () {
+                                notes[MiscellaneousFunctions()
+                                        .networkingDateFormat(
+                                            date: selectedDate)]
+                                    .remove(heading);
+                                unsavedChanges = true;
+                                setState(() {
+                                  buildEditorCards();
+                                });
                                 Navigator.pop(context);
+                                buildEditorCards();
                                 return true;
                               })
                         ],
@@ -426,7 +431,7 @@ class _EditNotesState extends State<EditNotes> {
                       builder: (context) {
                         return AlertDialog(
                           title: Text(
-                            'Update the schedule?',
+                            'Update notes?',
                             style: kHeadingTextStyle2.copyWith(
                                 color: kPrimaryColor, fontSize: 30.0),
                           ),
@@ -443,9 +448,17 @@ class _EditNotesState extends State<EditNotes> {
                                   ),
                                 ),
                                 color: kLightHighlightColor,
-                                onPressed: () {
+                                onPressed: () async {
                                   unsavedChanges = false;
-                                  Networking().updateNotes(notes: notes);
+                                  Fluttertoast.showToast(
+                                      msg: "Updating! Please wait",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: kLightColor,
+                                      textColor: kPrimaryColor,
+                                      fontSize: 16.0);
+                                  await Networking().updateNotes(notes: notes);
                                   Navigator.pop(context);
 
                                   Navigator.pushReplacementNamed(

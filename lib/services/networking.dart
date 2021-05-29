@@ -139,7 +139,7 @@ class Networking {
     }
   }
 
-  void updateTimeTable({timetable}) async {
+  Future<void> updateTimeTable({timetable}) async {
     Map<String, dynamic> convertedTT = new Map<String, dynamic>.from(timetable);
     Map info = await getUserInfo();
     String key =
@@ -202,7 +202,7 @@ class Networking {
     }
   }
 
-  void updateAnnouncements({@required Map announcements}) async {
+  Future<void> updateAnnouncements({@required Map announcements}) async {
     Map<String, dynamic> convertedAnnouncements =
         new Map<String, dynamic>.from(announcements);
 
@@ -219,6 +219,7 @@ class Networking {
 
     var data = await users.doc(FirebaseAuth.instance.currentUser.email).get();
     Map convertedData = data.data();
+    print('Networking Class Notes: $convertedData');
     if (convertedData['notes'] != null) {
       return convertedData['notes'];
     } else {
@@ -226,7 +227,7 @@ class Networking {
     }
   }
 
-  void updateNotes({@required Map notes}) async {
+  Future<void> updateNotes({@required Map notes}) async {
     Map<String, dynamic> convertedNotes = new Map<String, dynamic>.from(notes);
 
     CollectionReference users = FirebaseFirestore.instance.collection('users');

@@ -605,7 +605,7 @@ class _EditAssignmentsState extends State<EditAssignments> {
                         builder: (context) {
                           return AlertDialog(
                             title: Text(
-                              'Update the schedule?',
+                              'Update assignments?',
                               style: kHeadingTextStyle2.copyWith(
                                   color: kPrimaryColor, fontSize: 30.0),
                             ),
@@ -622,9 +622,17 @@ class _EditAssignmentsState extends State<EditAssignments> {
                                     ),
                                   ),
                                   color: kLightHighlightColor,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     unsavedChanges = false;
-                                    Networking().updateAssignments(
+                                    Fluttertoast.showToast(
+                                        msg: "Updating! Please wait",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: kLightColor,
+                                        textColor: kPrimaryColor,
+                                        fontSize: 16.0);
+                                    await Networking().updateAssignments(
                                         assignments: assignments);
 
                                     Navigator.pop(context);

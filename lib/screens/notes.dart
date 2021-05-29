@@ -25,7 +25,9 @@ class _NotesState extends State<Notes> {
         MiscellaneousFunctions().networkingDateFormat(date: selectedDate);
 
     Map notesForTheDay = notes[date];
-    if (notesForTheDay == null) {
+    print(notesForTheDay);
+    if (notesForTheDay == null || notesForTheDay.length == 0) {
+      print('here');
       Widget card = Container(
         padding: EdgeInsets.all(16.0),
         decoration: BoxDecoration(
@@ -64,7 +66,7 @@ class _NotesState extends State<Notes> {
 
   void getData() async {
     notes = await Networking().getNotes();
-
+    print('Notes: $notes');
     buildNotesCards();
   }
 
